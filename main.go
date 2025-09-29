@@ -29,17 +29,9 @@ func main() {
 	// fmt.Println("Parameters Width:", config.Parameters.Width)
 
 	// 启动路由
-
 	http.HandleFunc("/v1/chat/completions", func(w http.ResponseWriter, r *http.Request) {
 		api.Completions(w, r, &cfg)
-	}) // 修改了路由
-
-	// http.HandleFunc("/v1/images/generations", api.Completions) // 修改了路由
-	// http.HandleFunc("/tokens/upload", api.HandleUploadTokens)
-	// http.HandleFunc("/tokens/count", api.HandleGetAvailableTokensCount)
-	// http.HandleFunc("/tokens", api.HandleClearTokens)           // 使用 DELETE 方法清空
-	// http.HandleFunc("/tokens/errors", api.HandleGetErrorTokens) // 如果你实现了这个接口
-	// http.HandleFunc("/web/", api.WebCheck)                      // 前端页面
+	})
 
 	log.Println("Starting server on : ", cfg.Server.Addr)
 

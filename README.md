@@ -64,7 +64,7 @@ novel-api重构/
 1. **克隆项目**
 ```bash
 git clone <repository-url>
-cd novel-api重构
+cd novel-api-go
 ```
 
 2. **安装依赖**
