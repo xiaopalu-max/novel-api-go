@@ -65,6 +65,7 @@ novel-api重构/
 ```bash
 git clone <repository-url>
 cd novel-api-go
+mv env .env
 ```
 
 2. **安装依赖**
@@ -279,6 +280,12 @@ COPY --from=builder /app/novel-api .
 COPY --from=builder /app/.env .
 CMD ["./novel-api"]
 ```
+
+### 接入 New-api
+
+1. 获取 Novelai 永久秘钥  [Novelai官方](https://novelai.net/image) --> 账号(Get Persistent API Token)
+2. New-api --> 新建渠道--> 选择OpenAI类型 --> Url:https://你自己设置的域名 --> 模型选择 [上面说的 6 个模型] --> 提交完成
+3. 正常对话即可画图
 
 ### 生产环境建议
 1. 使用反向代理（Nginx）

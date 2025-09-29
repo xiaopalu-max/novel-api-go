@@ -1,0 +1,111 @@
+# 启动端口号
+server:
+  addr: 3388
+
+# 存储桶选择 Tengxun Minio Alist 
+cos:
+  backet: Tengxun
+  
+# 翻译 API
+translation:
+  enable: true  # 是否开启
+  url: https://api.codesphere.chat
+  key: sk-aaaaaaaaaaaaaaaaaaaaaa
+  model: gpt-4.1-nano
+  # 人设
+  role: "
+Novel 是一个深度学习文本到图像模型，基于输入的提示词生成新的图像，指定要包含或省略的元素。
+这里，我介绍了 Novel 算法中的提示词概念，也称为 prompts。
+以下提示词用于指导 AI 绘画模型创作图像。它们包含图像的各种细节，如角色外观、背景、颜色、光影效果，以及图像的主题和风格。这些提示词的格式通常包括 [] 和 {}，其中用 [] 包裹的提示词表示权重降低，用 {} 包裹的提示词表示权重增加。例如，“{{{{masterpiece}}}}” 表示作品质量非常重要。{} 或 [] 的数量表示提示词权重增加或减少的程度。
+以下是使用提示词帮助 AI 模型生成图像的示例：
+
+一个穿着白色长裙的天使形象，背后有白色翅膀，头戴金色光环。她的服装饰有金链和十字架，穿银色靴子。
+
+{1girl},cold,solo,{detailed eyes},{shine golden eyes},{long liverhair},expressionless,{long sleeves},{puffy sleeves},{white wings},halo,{{heavy metal}},{metal jewelry},cross-laced footwear,{chain},{{white doves}}
+
+按照示例，为以下内容提供详细的提示词描述,只需要回复提示词即可。"
+  enable: true
+
+# 腾讯云COS配置
+tencent_cos:
+  secret_id: ""
+  secret_key: ""
+  region: "ap-guangzhou"  # 地区
+  bucket: "xxxx-12312391003" # 桶名称
+  base_url: "https://xxxx.myqcloud.com"  # 上传域名
+
+# Minio配置
+minio:
+  endpoint: "excomple.com"
+  access_key_id: ""
+  secret_access_key: ""
+  bucket_name: "novel"
+  use_ssl: true  # 如果域名是 https 的则开启，不开启就写 ip+端口
+  base_url: "https://excomple.com"  # 访问的 url，如果是 IP+端口就写： http://127.0.0.1:9000
+
+# Alist配置
+alist:
+  base_url: "http://127.0.0.1:5244"
+  token: ""                              # 可选：直接使用token，如果为空则使用用户名密码登录
+  path: "/nai"                       # 上传路径
+  username: "admin"                      # 用户名（当token为空时使用）
+  password: "qwerqwer123"                   # 密码（当token为空时使用）
+
+# 图片参数(我喜欢大雷,这是以大雷为准调试的参数，再苦不能苦孩子)
+parameters:
+  # 参数版本，通常用于API版本控制。
+  params_version: 3
+  # 生成图像的宽度（以像素为单位）。
+  width: 832
+  # 生成图像的高度（以像素为单位）。
+  height: 1216
+  # 像生成的比例，影响图像的细节和质量,最高为10。
+  scale: 5.5
+  # 指定采样器类型。官方采样器: k_dpmpp_2s_ancestral(比较清晰) k_euler_ancestral(较好) k_euler(比较清晰) k_dpmpp_2m_sde(比较清晰)
+  sampler: "k_euler_ancestral"
+  # 生成图像的步骤数，步骤越多，生成的图像通常越精细，上限50，订阅会员超过 28 会扣点数。
+  steps: 28
+  # 要生成的图像样本数量。订阅会员超过 1 张会扣点数。
+  n_samples: 1
+  # 可能是控制生成图像的某种预设参数。
+  ucPreset: 0
+  # 是否启用高质量生成选项。
+  qualityToggle: true
+  # 可能表示某种特定的模式或设置(会打光影)。
+  sm: true
+  # 动态设置，可能与生成过程的灵活性有关。
+  sm_dyn: false
+  # 动态阈值处理，可能用于调整图像生成的阈值。
+  dynamic_thresholding: true
+  # 控制网络的强度，可能影响生成的图像细节。
+  controlnet_strength: 1
+  # 是否使用旧版模型或设置。
+  legacy: false
+  # 是否在生成图像中添加原始图像。
+  add_original_image: true
+  # 配置重缩放参数。上限为 1
+  cfg_rescale: 0
+  # 噪声调度策略，影响生成图像的噪声特性。 官方策略：polyexponential(较好) karras(较好) native(不好评价) exponential(较好)
+  noise_schedule: "karras"
+  # 可能与旧版模型的扩展功能有关。
+  legacy_v3_extend: false
+  # 可能与某种配置参数有关，具体取值为null表示不使用该参数。
+  skip_cfg_above_sigma: 19
+  # 可能是与特定采样器有关的设置。
+  deliberate_euler_ancestral_bug: false
+  # 可能表示在生成过程中偏向于布朗运动的某种行为。
+  prefer_brownian: true
+  # 自动 SMEA 优化，可能用于改善图像质量。
+  autoSmea: true
+  # 是否使用坐标系统，用于角色定位和构图控制。
+  use_coords: false
+  # 是否使用旧版负面提示词格式。
+  legacy_uc: true
+  # 是否标准化参考图像强度倍数，用于参考图像处理。
+  normalize_reference_strength_multiple: true
+  # 图像修补时的强度参数，控制修补效果的强弱。
+  inpaintImg2ImgStrength: 1
+  # 是否使用新的共享试用功能。
+  use_new_shared_trial: true
+  # 自定义反词
+  custom_anti_words: "pussy, nipples, nude, naked, nsfw, lowres, {bad}, error, fewer, extra, missing, worst quality, jpeg artifacts, bad quality, watermark, unfinished, displeasing, chromatic aberration, signature, extra digits, artistic error, username, scan, [abstract],blurry, lowres, error, film grain, scan artifacts, worst quality, bad quality, jpeg artifacts, very displeasing, chromatic aberration, logo, dated, signature, multiple views, gigantic breasts, white blank page, blank page"
