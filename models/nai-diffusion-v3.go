@@ -25,6 +25,10 @@ func min(a, b int) int {
 }
 
 func Nai3(w http.ResponseWriter, r *http.Request, req config.ChatRequest, randomSeed int, base64String string, authHeader string, cfg *config.Config, userInput string) {
+	Nai3WithFormat(w, r, req, randomSeed, base64String, authHeader, cfg, userInput, false)
+}
+
+func Nai3WithFormat(w http.ResponseWriter, r *http.Request, req config.ChatRequest, randomSeed int, base64String string, authHeader string, cfg *config.Config, userInput string, isDallRequest bool) {
 	// 请求连接
 	apiURL := "https://image.novelai.net/ai/generate-image"
 	log.Println("Preparing payload for API request.")
@@ -189,23 +193,51 @@ func Nai3(w http.ResponseWriter, r *http.Request, req config.ChatRequest, random
 			publicLink := fmt.Sprintf("![%s](%s)", imageName, outputs)
 			fmt.Println(publicLink)
 
-			// 组装流式输出数据
-			sseResponse := fmt.Sprintf(
-				"data: {\"id\":\"%s\",\"object\":\"chat.completion.chunk\",\"created\":%d,\"model\":\"%s\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"%s\"},\"logprobs\":null,\"finish_reason\":null}]}\n\n",
-				"chatcmpl-"+fmt.Sprintf("%d", timestamp), // 生成一个唯一的 id
-				timestamp,
-				req.Model,
-				publicLink,
-			)
+			// 根据请求类型决定响应格式
+			if isDallRequest {
+				// DALL-E 格式响应
+				dallResponse := map[string]interface{}{
+					"data": []map[string]interface{}{
+						{
+							"url": outputs,
+						},
+					},
+					"usage": map[string]interface{}{
+						"prompt_tokens":     0,
+						"completion_tokens": 0,
+						// "total_tokens":      16384,
+						"prompt_tokens_details": map[string]interface{}{
+							"cached_tokens_details": map[string]interface{}{},
+						},
+						"completion_tokens_details": map[string]interface{}{},
+						// "output_tokens":             16384,
+					},
+					"created": timestamp,
+				}
 
-			w.Header().Set("Content-Type", "text/event-stream")
-			w.Write([]byte(sseResponse))
-			w.(http.Flusher).Flush() // 刷新响应缓冲区到客户端
+				w.Header().Set("Content-Type", "application/json")
+				json.NewEncoder(w).Encode(dallResponse)
+			} else {
+				// 原有的流式聊天响应格式
+				sseResponse := fmt.Sprintf(
+					"data: {\"id\":\"%s\",\"object\":\"chat.completion.chunk\",\"created\":%d,\"model\":\"%s\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"%s\"},\"logprobs\":null,\"finish_reason\":null}]}\n\n",
+					"chatcmpl-"+fmt.Sprintf("%d", timestamp), // 生成一个唯一的 id
+					timestamp,
+					req.Model,
+					publicLink,
+				)
+
+				w.Header().Set("Content-Type", "text/event-stream")
+				w.Write([]byte(sseResponse))
+				w.(http.Flusher).Flush() // 刷新响应缓冲区到客户端
+			}
 			break
 		}
 	}
 
-	// 结束流式输出
-	w.Write([]byte("event: end\n\n"))
-	w.(http.Flusher).Flush() // 刷新最后一条消息
+	// 如果不是 DALL-E 请求，则结束流式输出
+	if !isDallRequest {
+		w.Write([]byte("event: end\n\n"))
+		w.(http.Flusher).Flush() // 刷新最后一条消息
+	}
 }

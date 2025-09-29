@@ -32,6 +32,9 @@ func main() {
 	http.HandleFunc("/v1/chat/completions", func(w http.ResponseWriter, r *http.Request) {
 		api.Completions(w, r, &cfg)
 	})
+	http.HandleFunc("/v1/images/generations", func(w http.ResponseWriter, r *http.Request) {
+		api.Generations(w, r, &cfg)
+	})
 
 	log.Println("Starting server on : ", cfg.Server.Addr)
 
