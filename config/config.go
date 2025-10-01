@@ -18,6 +18,11 @@ type Config struct {
 		Addr string `yaml:"addr"`
 	}
 
+	// 日志管理密码
+	LogsAdmin struct {
+		Password string `yaml:"password"`
+	} `yaml:"logs_admin"`
+
 	// 存储桶选择器配置
 	COS struct {
 		Bucket string `yaml:"backet"` // 注意这里保持和.env文件中的拼写一致

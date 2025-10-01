@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"novel-api/config"
+	"novel-api/logs"
 	"novel-api/upload"
 	"time"
 )
@@ -282,9 +283,28 @@ func Nai4WithFormat(w http.ResponseWriter, r *http.Request, req config.ChatReque
 			if err != nil {
 				log.Printf("NAI-4 图片上传失败: %v", err)
 				outputs = fmt.Sprintf("error: 上传失败 - %s", imageName)
+
+				// 记录失败日志
+				logs.LogImage(logs.ImageLog{
+					Model:    req.Model,
+					Prompt:   userInput,
+					ImageURL: "",
+					UserIP:   r.RemoteAddr,
+					Status:   "failed",
+					Error:    fmt.Sprintf("上传失败: %v", err),
+				})
 			} else {
 				log.Printf("NAI-4 图片上传成功: %s", response.Data.URL)
 				outputs = response.Data.URL
+
+				// 记录成功日志
+				logs.LogImage(logs.ImageLog{
+					Model:    req.Model,
+					Prompt:   userInput,
+					ImageURL: outputs,
+					UserIP:   r.RemoteAddr,
+					Status:   "success",
+				})
 			}
 
 			publicLink := fmt.Sprintf("![%s](%s)", imageName, outputs)
@@ -303,12 +323,12 @@ func Nai4WithFormat(w http.ResponseWriter, r *http.Request, req config.ChatReque
 					"usage": map[string]interface{}{
 						"prompt_tokens":     0,
 						"completion_tokens": 0,
-						// "total_tokens":      16384,
+						"total_tokens":      16384,
 						"prompt_tokens_details": map[string]interface{}{
 							"cached_tokens_details": map[string]interface{}{},
 						},
 						"completion_tokens_details": map[string]interface{}{},
-						// "output_tokens":             16384,
+						"output_tokens":             16384,
 					},
 				}
 

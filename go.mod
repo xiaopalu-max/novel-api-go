@@ -5,6 +5,7 @@ go 1.23.0
 toolchain go1.24.7
 
 require (
+	github.com/minio/minio-go/v7 v7.0.95
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.45
 	gopkg.in/yaml.v2 v2.4.0
 )
@@ -20,7 +21,6 @@ require (
 	github.com/klauspost/cpuid/v2 v2.2.11 // indirect
 	github.com/minio/crc64nvme v1.0.2 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
-	github.com/minio/minio-go/v7 v7.0.95 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/mozillazg/go-httpheader v0.2.1 // indirect
 	github.com/philhofer/fwd v1.2.0 // indirect
@@ -30,4 +30,5 @@ require (
 	golang.org/x/net v0.41.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/text v0.26.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
