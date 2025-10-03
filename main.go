@@ -24,6 +24,7 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Config loaded successfully")
+	fmt.Printf("Translation config: Enable=%v, URL=%s, Model=%s\n", cfg.Translation.Enable, cfg.Translation.URL, cfg.Translation.Model)
 
 	// 初始化日志系统
 	if err := logs.InitLogger(); err != nil {

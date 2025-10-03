@@ -80,6 +80,7 @@ func Generations(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 	userInput := req.Prompt
 
 	// 5. 如果启用翻译，则翻译用户输入
+	log.Printf("[Generations] Translation.Enable value: %v (URL: %s, Model: %s)", cfg.Translation.Enable, cfg.Translation.URL, cfg.Translation.Model)
 	if cfg.Translation.Enable {
 		translatedInput, err := TranslateText(userInput, cfg)
 		if err != nil {
@@ -88,6 +89,8 @@ func Generations(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 			log.Printf("Translation enabled, translated: %s -> %s", userInput, translatedInput)
 			userInput = translatedInput
 		}
+	} else {
+		log.Printf("[Generations] Translation is disabled, skipping translation")
 	}
 
 	// 6. 提取用户输入中的链接 (用于参考图像)

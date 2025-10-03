@@ -65,6 +65,13 @@ type Config struct {
 		Password string `yaml:"password"`
 	} `yaml:"alist"`
 
+	// Lsky图床配置变量
+	Lsky struct {
+		BaseURL    string `yaml:"base_url"`
+		Token      string `yaml:"token"`
+		StrategyID int    `yaml:"strategy_id"` // 存储策略ID，可选
+	} `yaml:"lsky"`
+
 	// 图片质量变量
 	Parameters struct {
 		ParamsVersion                      int     `yaml:"params_version"`

@@ -62,6 +62,7 @@ func Completions(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 	}
 
 	// 如果启用翻译，则翻译用户输入
+	log.Printf("[Completions] Translation.Enable value: %v (URL: %s, Model: %s)", cfg.Translation.Enable, cfg.Translation.URL, cfg.Translation.Model)
 	if cfg.Translation.Enable {
 		translatedInput, err := TranslateText(userInput, cfg)
 		if err != nil {
@@ -70,6 +71,8 @@ func Completions(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 			log.Printf("Translation enabled, translated: %s -> %s", userInput, translatedInput)
 			userInput = translatedInput
 		}
+	} else {
+		log.Printf("[Completions] Translation is disabled, skipping translation")
 	}
 
 	// 提取用户输入中的链接

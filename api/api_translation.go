@@ -40,10 +40,12 @@ type TranslationResponse struct {
 // TranslateText 调用 AI 翻译文本
 func TranslateText(text string, cfg *config.Config) (string, error) {
 	// 检查是否启用翻译
+	log.Printf("Translation Enable flag: %v (type: %T)", cfg.Translation.Enable, cfg.Translation.Enable)
 	if !cfg.Translation.Enable {
 		log.Println("Translation is disabled, returning original text")
 		return text, nil
 	}
+	log.Println("Translation is enabled, proceeding with translation")
 
 	// 构建翻译请求
 	translateReq := TranslationRequest{

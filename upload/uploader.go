@@ -26,8 +26,11 @@ func CreateUploader(cfg *config.Config) (Uploader, error) {
 	case "alist":
 		log.Printf("使用Alist上传器")
 		return NewAlistUploader(cfg)
+	case "lsky":
+		log.Printf("使用兰空图床上传器")
+		return NewLskyUploader(cfg)
 	default:
-		return nil, fmt.Errorf("不支持的存储桶类型: %s，支持的类型: Tengxun, Minio, Alist", cfg.COS.Bucket)
+		return nil, fmt.Errorf("不支持的存储桶类型: %s，支持的类型: Tengxun, Minio, Alist, Lsky", cfg.COS.Bucket)
 	}
 }
 
