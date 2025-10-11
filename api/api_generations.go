@@ -103,11 +103,29 @@ func Generations(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 		base64String, _ = ImageURLToBase64(imageURLS)
 	}
 
-	// 7. 生成一个随机种子
+	// 7. 解析 size 参数，如果没有传递则使用配置文件中的默认值
+	width := cfg.Parameters.Width
+	height := cfg.Parameters.Height
+	if req.Size != "" {
+		// 解析 size 参数，格式如 "1024x1024"
+		var parsedWidth, parsedHeight int
+		_, err := fmt.Sscanf(req.Size, "%dx%d", &parsedWidth, &parsedHeight)
+		if err == nil && parsedWidth > 0 && parsedHeight > 0 {
+			width = parsedWidth
+			height = parsedHeight
+			log.Printf("Using size from request: %dx%d", width, height)
+		} else {
+			log.Printf("Invalid size format '%s', using default: %dx%d", req.Size, width, height)
+		}
+	} else {
+		log.Printf("No size specified, using default: %dx%d", width, height)
+	}
+
+	// 8. 生成一个随机种子
 	rand.Seed(time.Now().UnixNano())
 	randomSeed := rand.Intn(1000000)
 
-	// 8. 构建兼容的 ChatRequest 结构 (复用现有模型)
+	// 9. 构建兼容的 ChatRequest 结构 (复用现有模型)
 	compatibleReq := config.ChatRequest{
 		Authorization: authHeader,
 		Model:         req.Model,
@@ -119,28 +137,28 @@ func Generations(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 		},
 	}
 
-	// 9. 根据模型来调用相应的生成函数 (DALL-E 格式)
+	// 10. 根据模型来调用相应的生成函数 (DALL-E 格式)
 	// 标识这是 DALL-E 格式请求
 	isDallRequest := true
 
 	switch req.Model {
 	case "nai-diffusion-3":
-		models.Nai3WithFormat(w, r, compatibleReq, randomSeed, base64String, authHeader, cfg, userInput, isDallRequest)
+		models.Nai3WithFormatAndSize(w, r, compatibleReq, randomSeed, base64String, authHeader, cfg, userInput, width, height, isDallRequest)
 	case "nai-diffusion-furry-3":
-		models.Nai3WithFormat(w, r, compatibleReq, randomSeed, base64String, authHeader, cfg, userInput, isDallRequest)
+		models.Nai3WithFormatAndSize(w, r, compatibleReq, randomSeed, base64String, authHeader, cfg, userInput, width, height, isDallRequest)
 	case "nai-diffusion-4-full":
-		models.Nai4WithFormat(w, r, compatibleReq, randomSeed, base64String, authHeader, cfg, userInput, nil, isDallRequest)
+		models.Nai4WithFormatAndSize(w, r, compatibleReq, randomSeed, base64String, authHeader, cfg, userInput, nil, width, height, isDallRequest)
 	case "nai-diffusion-4-curated-preview":
-		models.Nai4WithFormat(w, r, compatibleReq, randomSeed, base64String, authHeader, cfg, userInput, nil, isDallRequest)
+		models.Nai4WithFormatAndSize(w, r, compatibleReq, randomSeed, base64String, authHeader, cfg, userInput, nil, width, height, isDallRequest)
 	case "nai-diffusion-4-5-curated":
-		models.Nai4WithFormat(w, r, compatibleReq, randomSeed, base64String, authHeader, cfg, userInput, nil, isDallRequest)
+		models.Nai4WithFormatAndSize(w, r, compatibleReq, randomSeed, base64String, authHeader, cfg, userInput, nil, width, height, isDallRequest)
 	case "nai-diffusion-4-5-full":
-		models.Nai4WithFormat(w, r, compatibleReq, randomSeed, base64String, authHeader, cfg, userInput, nil, isDallRequest)
+		models.Nai4WithFormatAndSize(w, r, compatibleReq, randomSeed, base64String, authHeader, cfg, userInput, nil, width, height, isDallRequest)
 	default:
 		// 对于不识别的模型，尝试使用默认的 NAI-3 模型
 		log.Printf("Unknown model '%s', falling back to nai-diffusion-3", req.Model)
 		compatibleReq.Model = "nai-diffusion-3"
-		models.Nai3WithFormat(w, r, compatibleReq, randomSeed, base64String, authHeader, cfg, userInput, isDallRequest)
+		models.Nai3WithFormatAndSize(w, r, compatibleReq, randomSeed, base64String, authHeader, cfg, userInput, width, height, isDallRequest)
 	}
 }
 

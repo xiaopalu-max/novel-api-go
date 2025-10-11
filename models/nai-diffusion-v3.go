@@ -30,6 +30,10 @@ func Nai3(w http.ResponseWriter, r *http.Request, req config.ChatRequest, random
 }
 
 func Nai3WithFormat(w http.ResponseWriter, r *http.Request, req config.ChatRequest, randomSeed int, base64String string, authHeader string, cfg *config.Config, userInput string, isDallRequest bool) {
+	Nai3WithFormatAndSize(w, r, req, randomSeed, base64String, authHeader, cfg, userInput, cfg.Parameters.Width, cfg.Parameters.Height, isDallRequest)
+}
+
+func Nai3WithFormatAndSize(w http.ResponseWriter, r *http.Request, req config.ChatRequest, randomSeed int, base64String string, authHeader string, cfg *config.Config, userInput string, width int, height int, isDallRequest bool) {
 	// 请求连接
 	apiURL := "https://image.novelai.net/ai/generate-image"
 	log.Println("Preparing payload for API request.")
@@ -41,8 +45,8 @@ func Nai3WithFormat(w http.ResponseWriter, r *http.Request, req config.ChatReque
 		"action": "generate",
 		"parameters": map[string]interface{}{
 			"params_version":                 cfg.Parameters.ParamsVersion,
-			"width":                          cfg.Parameters.Width,
-			"height":                         cfg.Parameters.Height,
+			"width":                          width,
+			"height":                         height,
 			"scale":                          cfg.Parameters.Scale,
 			"sampler":                        cfg.Parameters.Sampler,
 			"steps":                          cfg.Parameters.Steps,
