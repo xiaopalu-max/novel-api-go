@@ -611,3 +611,7 @@ A: 直接下载 `logs/image_logs.json` 文件即可，这是标准的JSONL格式
 🎨 **Happy Creating with Novel API!** 🎨
 
 💡 **使用日志系统监控您的创作历程！** 💡
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=xiaopalu-max/novel-api-go&type=date&legend=top-left)](https://www.star-history.com/#xiaopalu-max/novel-api-go&type=date&legend=top-left)
